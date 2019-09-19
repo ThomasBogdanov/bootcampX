@@ -5,11 +5,30 @@ const pool = new Pool({
   host: 'localhost',
   database: 'bootcampx'
 });
-const userArgs = process.argv.slice(2);
-const month = userArgs[0];
-const limit = userArgs[1];
-console.log(month, limit);
 
+const cohortName = process.argv[2];
+const values = [`%${cohortName}%`];
+
+
+queryString = `
+SELECT DISTINCT teachers.name as teacher, cohorts.name as cohort
+FROM teachers
+JOIN assistance_requests ON teacher_id = teachers.id
+JOIN students ON student_id = students.id
+JOIN cohorts ON cohort_id = cohorts.id
+WHERE cohorts.name = '${process.argv[2] || 'JUL02'}'
+ORDER BY teacher;
+`
+
+pool
+    .query(queryString, values)
+    .then(res => {
+        res.rows.forEach(row => {
+        console.log($1, $2);
+    })
+});
+
+Correct Answer
 pool.query(`
 SELECT DISTINCT teachers.name as teacher, cohorts.name as cohort
 FROM teachers
@@ -24,4 +43,3 @@ ORDER BY teacher;
     console.log(`${row.cohort}: ${row.teacher}`);
   })
 });
-
